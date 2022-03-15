@@ -7,8 +7,8 @@
 
 #define FIREBASE_HOST "breathalyzer-app-99c57-default-rtdb.firebaseio.com"
 #define FIREBASE_AUTH "cOcpd8TMsxqYDkMV80SSbasM9lpHxJfmx5Nbtn8A"
-#define WIFI_SSID "Anthony’s iPhone"
-#define WIFI_PASSWORD "01234567"
+#define WIFI_SSID "BELL078"
+#define WIFI_PASSWORD "A56C973DD497"
 #define MQ3pin 34
 
 float sensorValue;  // variable to store sensor value
@@ -21,11 +21,18 @@ void setup() {
   while (WiFi.status() != WL_CONNECTED);
 
   Firebase.begin(FIREBASE_HOST,FIREBASE_AUTH);
+
+  delay(20000);   // sensor warmup
 }
 
 void loop() {
-    sensorValue = analogRead(MQ3pin);
-    int val = (sensorValue-1000);                       // this sensor has a really high reading, -1000 brings it about expected (<200 is no alchohol, >~500 is alot)
-    Firebase.setFloat(fbdb, "MQ3 Reading/Value", val);
-    delay(1000);
+    sensorValue = analogRead(MQ3pin); 
+    float bac = ((sensorValue - 1150) / 1300);                // converts sensor reading up to ~0.5 BAC values
+
+    if (bac < 0.01) {                                         // at this point it's basically 0
+      bac = 0.0;
+    }
+    
+    Firebase.setFloat(fbdb, "MQ3 Reading/Value", bac);
+    delay(200);
 }
