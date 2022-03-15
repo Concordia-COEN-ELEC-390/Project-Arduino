@@ -7,11 +7,9 @@
 #define MQ3pin 0
 
 FirebaseData fbdo;
-float sensorValue;                      // variable to store sensor value
-char ssid[] = "-------";                // network SSID (name)
-char pass[] = "------------";           // network password (use for WPA, or use as key for WEP)
-//char ssid[] = "Anthony’s iPhone";           
-//char pass[] = "01234567";                   
+float sensorValue;                      // variable to store sensor value        
+char ssid[] = "Anthony’s iPhone";       // network SSID (name)
+char pass[] = "01234567";               // network password (use for WPA, or use as key for WEP)      
 int status = WL_IDLE_STATUS;            // Wi-Fi radio's status
 
 void setup() {
@@ -25,15 +23,22 @@ void setup() {
   
   Firebase.begin("breathalyzer-app-99c57-default-rtdb.firebaseio.com", "cOcpd8TMsxqYDkMV80SSbasM9lpHxJfmx5Nbtn8A", ssid, pass);
   Firebase.reconnectWiFi(true);
+
+  delay(20000);                         // sensor warmup
 }
 
 void loop() {
     
     sensorValue = analogRead(MQ3pin);   // read analog input pin 0
+    float bac ((sensorValue - 150) / 1370);                // converts sensor reading up to ~0.5 BAC values
+
+    if (bac < 0.01) {                                         // at this point it's basically 0
+      bac = 0.0;
+    }
     // try sending data, if not successful then print error 
-    if (!(Firebase.setFloat(fbdo, "MQ3 Reading/Value", sensorValue))){
+    if (!(Firebase.setFloat(fbdo, "MQ3 Reading/Value", bac))){
       Serial.println(fbdo.errorReason());
      }
 
-    delay(1000);
+    delay(200);
 }
