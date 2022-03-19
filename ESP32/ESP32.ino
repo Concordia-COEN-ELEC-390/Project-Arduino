@@ -7,8 +7,8 @@
 
 #define FIREBASE_HOST "breathalyzer-app-99c57-default-rtdb.firebaseio.com"
 #define FIREBASE_AUTH "cOcpd8TMsxqYDkMV80SSbasM9lpHxJfmx5Nbtn8A"
-#define WIFI_SSID "BELL078"
-#define WIFI_PASSWORD "A56C973DD497"
+#define WIFI_SSID "-----"
+#define WIFI_PASSWORD "----------"
 #define MQ3pin 34
 
 float sensorValue;  // variable to store sensor value
@@ -27,9 +27,9 @@ void setup() {
 
 void loop() {
     sensorValue = analogRead(MQ3pin); 
-    float bac = ((sensorValue - 1150) / 1300);                // converts sensor reading up to ~0.5 BAC values
+    float bac = ((sensorValue - 1150) / 4200);                // converts sensor reading up to ~0.5 BAC values
 
-    if (bac < 0.01) {                                         // at this point it's basically 0
+    if (bac < 0.02) {                                         // at this point it's basically 0
       bac = 0.0;
     }
     
